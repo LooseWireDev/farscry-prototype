@@ -4,6 +4,7 @@ import Svg, {Path} from 'react-native-svg';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Avatar} from '../../components/Avatar';
 import {CallButton} from '../../components/CallButton';
+import {useCallContext} from '../../stores/callStore';
 import {useContacts} from '../../stores/contactsStore';
 import {colors} from '../../theme/colors';
 import {typography} from '../../theme/typography';
@@ -30,13 +31,14 @@ export function ContactDetailScreen({
 }: RootStackScreenProps<'ContactDetail'>) {
   const insets = useSafeAreaInsets();
   const {contactId, name} = route.params;
+  const {startCall} = useCallContext();
   const {contacts, removeContact, toggleFavorite} = useContacts();
 
   const contact = contacts.find(c => c.contact_user_id === contactId);
   const isFavorite = contact?.is_favorite ?? false;
 
   function handleCall() {
-    navigation.navigate('OutgoingCall', {contactId, contactName: name});
+    startCall(contactId, name);
   }
 
   function handleRemove() {
