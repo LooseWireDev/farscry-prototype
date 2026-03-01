@@ -89,7 +89,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       dispatch({type: 'LOADING'});
       try {
         const result = await AuthService.signUp(email, password, displayName);
-        if (result.session) {
+        if (result.session && result.user) {
           dispatch({
             type: 'SIGNED_IN',
             user: result.user,
@@ -110,10 +110,11 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     dispatch({type: 'LOADING'});
     try {
       const result = await AuthService.signIn(email, password);
+      if (!result.user || !result.session) throw new Error('Sign in failed');
       dispatch({
         type: 'SIGNED_IN',
         user: result.user,
-        session: result.session!,
+        session: result.session,
       });
     } catch (e: unknown) {
       dispatch({type: 'ERROR', error: e instanceof Error ? e.message : 'Sign in failed'});
