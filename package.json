@@ -1,0 +1,22 @@
+{
+  "name": "farscry",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "server:dev": "npm run dev --workspace=@farscry/signaling",
+    "server:build": "npm run build --workspace=@farscry/signaling",
+    "mobile:start": "npm run start --workspace=com.farscry.app",
+    "mobile:ios": "npm run ios --workspace=com.farscry.app",
+    "mobile:android": "npm run android --workspace=com.farscry.app",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">= 22.11.0"
+  }
+}
