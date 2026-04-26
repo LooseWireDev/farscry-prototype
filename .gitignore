@@ -1,0 +1,21 @@
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+*.db
+data/
+.nx/
+.turbo/
+
+# Playwright local artifacts
+.playwright/
+.playwright-cli/
+test-results/
+playwright-report/
+
+# Claude Code per-machine
+.claude/
+
+# Build outputs
+apps/web/src/routeTree.gen.ts

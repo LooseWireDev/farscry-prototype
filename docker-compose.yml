@@ -1,0 +1,76 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: farscry
+      POSTGRES_PASSWORD: farscry
+      POSTGRES_DB: farscry
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U farscry']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace/apps/api
+    command: pnpm exec drizzle-kit push --force
+    environment:
+      DATABASE_URL: postgresql://farscry:farscry@db:5432/farscry
+    volumes:
+      - ./apps/api/src:/workspace/apps/api/src
+      - ./apps/api/drizzle.config.ts:/workspace/apps/api/drizzle.config.ts
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace/apps/api
+    command: pnpm exec tsx watch src/index.ts
+    environment:
+      DATABASE_URL: postgresql://farscry:farscry@db:5432/farscry
+      BETTER_AUTH_SECRET: farscry-dev-secret-that-is-long-enough-for-32-chars
+      BETTER_AUTH_URL: http://localhost:3000
+      NODE_ENV: development
+    volumes:
+      - ./apps/api/src:/workspace/apps/api/src
+      - ./apps/api/drizzle.config.ts:/workspace/apps/api/drizzle.config.ts
+      - ./packages/shared/src:/workspace/packages/shared/src
+    ports:
+      - '3100:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace/apps/web
+    command: pnpm dev --host 0.0.0.0
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://api:3000
+    volumes:
+      - ./apps/web/src:/workspace/apps/web/src
+      - ./apps/web/index.html:/workspace/apps/web/index.html
+      - ./apps/web/vite.config.ts:/workspace/apps/web/vite.config.ts
+      - ./packages/shared/src:/workspace/packages/shared/src
+    ports:
+      - '5173:5173'
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

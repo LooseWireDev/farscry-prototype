@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Brand violet — primary accent */
+  --color-violet: #a78bfa;
+  --color-violet-dark: #8b6cf7;
+  --color-violet-deep: #6d4ed4;
+  --color-violet-dim: #4c3899;
+  --color-violet-subtle: rgba(167, 139, 250, 0.1);
+  --color-violet-glow: rgba(167, 139, 250, 0.06);
+
+  /* Surfaces */
+  --color-bg: #08090b;
+  --color-bg-elevated: #0d0e11;
+  --color-surface-1: #111316;
+  --color-surface-2: #171a1e;
+  --color-surface-3: #1e2126;
+
+  /* Borders */
+  --color-border-subtle: rgba(255, 255, 255, 0.05);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text */
+  --color-text-primary: #f0f2f4;
+  --color-text-secondary: #8c939e;
+  --color-text-tertiary: #4e5762;
+  --color-text-inverse: #08090b;
+
+  /* Status colors (kept minimal — violet is the main signal) */
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-violet: 0 0 24px rgba(167, 139, 250, 0.15), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+  --font-sans: 'Geist', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+/* Display ID — monospace, slightly tighter */
+.display-id {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  letter-spacing: 0;
+}
+
+/* Mono labels — uppercase tracking-wider */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Animations */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+@keyframes ring {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+}
+.animate-ring {
+  animation: ring 1.5s ease-in-out infinite;
+}

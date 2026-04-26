@@ -1,0 +1,15 @@
+{
+  "productName": "my-app",
+  "version": "0.0.0",
+  "identifier": "com.my-app.app",
+  "build": {
+    "beforeDevCommand": "cd ../web && pnpm dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "cd ../web && pnpm build",
+    "frontendDist": "../web/dist"
+  },
+  "app": {
+    "title": "my-app",
+    "windows": [{ "title": "my-app", "width": 1200, "height": 800 }]
+  }
+}
