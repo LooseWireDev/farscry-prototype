@@ -1,0 +1,27 @@
+**/node_modules
+**/dist
+**/.next
+**/.nx
+**/.turbo
+**/.cache
+
+# Local files
+.env
+.env.local
+**/.env.local
+*.db
+data/
+
+# Test artifacts
+test-results/
+playwright-report/
+.playwright/
+.playwright-cli/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Per-machine
+.claude/

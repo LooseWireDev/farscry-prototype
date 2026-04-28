@@ -1,0 +1,31 @@
+# Caddy serves the built web app and proxies API traffic.
+# TLS is handled upstream by Cloudflare Tunnel.
+
+:80 {
+  log {
+    output stdout
+    format console
+  }
+
+  # tRPC procedures
+  handle /trpc/* {
+    reverse_proxy api:3000
+  }
+
+  # Auth (better-auth) and webhooks
+  handle /api/* {
+    reverse_proxy api:3000
+  }
+
+  # WebSocket signaling
+  handle /ws {
+    reverse_proxy api:3000
+  }
+
+  # Static SPA — fallback to index.html for client-side routes
+  handle {
+    root * /usr/share/caddy
+    try_files {path} /index.html
+    file_server
+  }
+}

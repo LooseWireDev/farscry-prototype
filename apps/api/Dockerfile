@@ -1,22 +1,32 @@
+# Production API image — built from the monorepo root
+# Build: docker build -f apps/api/Dockerfile -t farscry-api .
+
 FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@latest --activate
-WORKDIR /app
+RUN apk add --no-cache wget && corepack enable && corepack prepare pnpm@10.11.0 --activate
+WORKDIR /workspace
 
+# ─── Install workspace dependencies (cached layer) ──────────────────────────
 FROM base AS deps
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prod
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+COPY apps/mobile/package.json ./apps/mobile/
+COPY apps/desktop/package.json ./apps/desktop/
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/config/package.json ./packages/config/
+COPY packages/ui/package.json ./packages/ui/
+COPY tools/project-plugin/package.json ./tools/project-plugin/
+RUN pnpm install --frozen-lockfile=false --filter @my-app/api... --filter @project/shared
 
-FROM base AS build
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
-COPY . .
-RUN pnpm build
+# ─── Production runtime ─────────────────────────────────────────────────────
+FROM base AS runtime
+COPY --from=deps /workspace ./
+COPY apps/api ./apps/api
+COPY packages/shared ./packages/shared
+WORKDIR /workspace/apps/api
 
-FROM base AS production
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/package.json ./
-
+ENV NODE_ENV=production
 EXPOSE 3000
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -q --spider http://localhost:3000/trpc/health || exit 1
-CMD ["node", "dist/index.js"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD wget -q --spider http://localhost:3000/trpc/health || exit 1
+CMD ["pnpm", "exec", "tsx", "src/index.ts"]
